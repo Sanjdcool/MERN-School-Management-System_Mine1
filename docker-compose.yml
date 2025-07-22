@@ -33,10 +33,23 @@
 # volumes:
 #   mongo-data: 
 version: '3.8'
-
 services:
+  mongo:
+    image: mongo:latest
+    container_name: school_mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=school_management
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-network
+    restart: unless-stopped
+
   backend:
-    image: ghcr.io/sanjdcool/mern-school-management-system_mine-backend:latest
+    image: ghcr.io/sanjdcool/mern-school-management-system_mine1-backend:latest
+    container_name: school_backend
     ports:
       - "5000:5000"
     environment:
@@ -50,25 +63,14 @@ services:
     restart: unless-stopped
 
   frontend:
-    image: ghcr.io/sanjdcool/mern-school-management-system_mine-frontend:latest
+    image: ghcr.io/sanjdcool/mern-school-management-system_mine1-frontend:latest
+    container_name: school_frontend
     ports:
       - "3000:3000"
     environment:
       - REACT_APP_API_URL=http://localhost:5000
     depends_on:
       - backend
-    networks:
-      - app-network
-    restart: unless-stopped
-
-  mongo:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    environment:
-      - MONGO_INITDB_DATABASE=school_management
-    volumes:
-      - mongo_data:/data/db
     networks:
       - app-network
     restart: unless-stopped
